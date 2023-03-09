@@ -1,78 +1,53 @@
 #!/usr/bin/python3
+"""Module defines `isWinner` function
 """
-Prime Game
-"""
-
-
-def findMultiples(num, targets):
-    """
-    Finds multiples of a given number within a list
-    """
-    for i in targets:
-        if i % num == 0:
-            targets.remove(i)
-    return targets
-
-
-def isPrime(i):
-    """
-    Check if a number is prime.
-    """
-    if i == 1:
-        return False
-    for j in range(2, i):
-        if i % j == 0:
-            return False
-    return True
-
-
-def findPrimes(n):
-    """
-    Dispatch a given set into prime numbers and non-prime numbers.
-    """
-    counter = 0
-    target = list(n)
-    for i in range(1, len(target) + 1):
-        if isPrime(i):
-            counter += 1
-            target.remove(i)
-            target = findMultiples(i, target)
-        else:
-            pass
-    return counter
 
 
 def isWinner(x, nums):
+    """Return name of the player that won most rounds
+    Args:
+        x: length of `nums` list
+        nums: list of numbers
+    Returns:
+        `Maria` if maria wins, `Ben` otherwise
     """
-    Maria and Ben are playing a game.Given a set of consecutive integers
-    starting from 1 up to and including n, they take turns choosing a
-    prime number from the set and removing that number and its
-    multiples from the set.
-    The player that cannot make a move loses the game.
-
-    They play x rounds of the game, where n may be different for each round.
-    Assuming Maria always goes first and both players play optimally,
-    determine who the winner of each game is.
-    """
-    players = {'Maria': 0, 'Ben': 0}
-    cluster = set()
-    for elem in range(x):
-        nums.sort()
-        num = nums[elem]
-        for i in range(1, num + 1):
-            cluster.add(i)
-            if i == num + 1:
-                break
-        temp = findPrimes(cluster)
-
-        if temp % 2 == 0:
-            players['Ben'] += 1
-        elif temp % 2 != 0:
-            players['Maria'] += 1
-
-    if players['Maria'] > players['Ben']:
+    scores = [0, 0]
+    for idx in range(x):
+        if idx <= len(nums) - 1:
+            if nums[idx] < 2:
+                scores[1] = scores[1] + 1
+                continue
+            num_range = [x for x in range(2, nums[idx] + 1)]
+            i = 0
+            while True:
+                if isPrime(num_range[0]) is True:
+                    j = 0
+                    modulator = num_range[0]
+                    while j < len(num_range):
+                        if (num_range[j] % modulator) == 0:
+                            num_range.remove(num_range[j])
+                        else:
+                            j = j + 1
+                if num_range == []:
+                    scores[i % 2] = scores[i % 2] + 1
+                    break
+                i = i + 1
+    if (scores[0] > scores[1]):
         return 'Maria'
-    elif players['Maria'] < players['Ben']:
-        return 'Ben'
     else:
-        return None
+        return 'Ben'
+
+
+def isPrime(num):
+    """Check if number is prime or not
+    Args:
+        nums: list of numbers
+    Returns:
+        `True` if prime, `False` otherwise
+    """
+    if num < 2:
+        return False
+    for x in range(2, int(num / 2)):
+        if num % x == 0:
+            return False
+    return True
